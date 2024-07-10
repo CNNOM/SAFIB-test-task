@@ -6,7 +6,7 @@
         <form class="login" @submit.prevent="login">
           <div class="login__field">
             <i class="login__icon fas fa-user"></i>
-            <input  v-model="username" type="text" class="login__input" placeholder="User name / Email">
+            <input  v-model="username" type="text" class="login__input" placeholder="Login">
           </div>
           <div class="login__field">
             <i class="login__icon fas fa-lock"></i>
