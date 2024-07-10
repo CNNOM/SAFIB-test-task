@@ -1,42 +1,46 @@
 <template>
   <div>
-    <h1 class="title">Главная</h1>
-    <div class="breadcrumbs-container">
-      <Breadcrumbs />
-    </div>
-    <div style="margin:20px;">
-      <nav>
-        <ul>
-          <li><router-link to="/admin">админ</router-link></li>
-          <li><router-link to="/login">логин</router-link></li>
-        </ul>
-      </nav>
-    </div>
-    <div style="margin:20px;">
-      <nav>
-        <ul>
-          <li v-for="(item, index) in menuItems" :key="index">
-            <router-link :to="`/section/${index}`">{{ item.name }}</router-link>
-            <ul v-if="item.subsections && item.subsections.length > 0">
-              <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">
-                <router-link :to="`/section/${index}/${subIndex}`">{{ subsection.name }}</router-link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
+    <Breadcrumbs />
+    <h1 class="title">Раздел {{ sectionName }}</h1>
+
+    <nav>
+      <ul>
+        <li v-for="(subsection, subIndex) in subsections" :key="subIndex">
+          <router-link :to="`/section/${$route.params.index}/${subIndex}`">{{ subsection.name }}</router-link>
+        </li>
+      </ul>
+    </nav>
+    <p v-if="!subsections || subsections.length === 0">Нет доступных подразделов.</p>
+    <router-view></router-view>
+
+    <div v-if="sectionContent">
+      <p>{{ sectionContent }}</p>
     </div>
   </div>
 </template>
+
 
 <script>
 import { mapState } from 'vuex';
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 export default {
-  components: {Breadcrumbs},
+  components: { Breadcrumbs },
   computed: {
-    ...mapState(['menuItems'])
+    ...mapState(['menuItems']),
+    section() {
+      const index = this.$route.params.index;
+      return this.menuItems[index] || {};
+    },
+    sectionName() {
+      return this.section.name || 'Неизвестный раздел';
+    },
+    sectionContent() {
+      return this.section.content || '';
+    },
+    subsections() {
+      return this.section.subsections || [];
+    }
   }
 }
 </script>
@@ -48,11 +52,6 @@ export default {
   margin: 20px;
   text-align: center;
 }
-.breadcrumbs-container {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-}
 nav {
   top: 15px;
   left: 50%;
@@ -62,6 +61,7 @@ nav {
   justify-content: center;
   border-radius: 30px;
   animation: slide-in 1s ease-out;
+  margin: 20px;
 }
 
 ul {
