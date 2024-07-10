@@ -1,7 +1,7 @@
 <template>
   <div>
     <Breadcrumbs />
-    <h1>Подраздел {{ subSectionName }}</h1>
+    <h1 class="title">Подраздел {{ subSectionName }}</h1>
     <div v-if="subSectionContent">
       <p>{{ subSectionContent }}</p>
     </div>
@@ -35,4 +35,10 @@ export default {
 }
 </script>
 <style scoped>
+.title {
+  color: #5C5696;
+  font-size: 24px;
+  margin: 20px;
+  text-align: center;
+}
 </style>

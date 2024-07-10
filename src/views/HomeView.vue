@@ -1,25 +1,31 @@
 <template>
   <div>
-    <nav>
-      <ul>
-        <li><router-link to="/admin">админ</router-link></li>
-        <li><router-link to="/login">логин</router-link></li>
-      </ul>
-    </nav>
-    <breadcrumbs style="margin-top: 100px"/>
-    <h1>Главная</h1>
-    <nav>
-      <ul>
-        <li v-for="(item, index) in menuItems" :key="index">
-          <router-link :to="`/section/${index}`">{{ item.name }}</router-link>
-          <ul v-if="item.subsections && item.subsections.length > 0">
-            <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">
-              <router-link :to="`/section/${index}/${subIndex}`">{{ subsection.name }}</router-link>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
+    <h1 class="title">Главная</h1>
+    <div class="breadcrumbs-container">
+      <Breadcrumbs />
+    </div>
+    <div style="margin:20px;">
+      <nav>
+        <ul>
+          <li><router-link to="/admin">админ</router-link></li>
+          <li><router-link to="/login">логин</router-link></li>
+        </ul>
+      </nav>
+    </div>
+    <div style="margin:20px;">
+      <nav>
+        <ul>
+          <li v-for="(item, index) in menuItems" :key="index">
+            <router-link :to="`/section/${index}`">{{ item.name }}</router-link>
+            <ul v-if="item.subsections && item.subsections.length > 0">
+              <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">
+                <router-link :to="`/section/${index}/${subIndex}`">{{ subsection.name }}</router-link>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </template>
 
@@ -36,7 +42,17 @@ export default {
 </script>
 <style scoped>
 
-
+.title {
+  color: #5C5696;
+  font-size: 24px;
+  margin: 20px;
+  text-align: center;
+}
+.breadcrumbs-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
 nav {
   top: 15px;
   left: 50%;
