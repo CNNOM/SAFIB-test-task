@@ -1,5 +1,6 @@
 <template>
   <div>
+    <breadcrumbs/>
     <router-link to="/admin">админ</router-link>
     <br>
     <router-link to="/login">логин</router-link>
@@ -15,8 +16,10 @@
 
 <script>
 import { mapState } from 'vuex';
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 export default {
+  components: {Breadcrumbs},
   computed: {
     ...mapState(['menuItems'])
   }

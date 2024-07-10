@@ -1,14 +1,16 @@
 <template>
   <div>
-    <router-link to="/">Вернуться на главную</router-link>
+    <breadcrumbs/>
     <h1>Подраздел {{ subSectionName }}</h1>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 export default {
+  components: {Breadcrumbs},
   computed: {
     ...mapState(['menuItems']),
     subSectionName() {
