@@ -15,21 +15,13 @@ export default {
   computed: {
     breadcrumbs() {
       const breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs')) || [];
-      console.log(breadcrumbs)
-      console.log(this.$route)
-      console.log(this)
-
-
       return breadcrumbs;
-
     },
-    sectionName() {
-      const index = this.$route.params.index;
-      return this.menuItems[index] ? this.menuItems[index].name : 'Неизвестный раздел';
-    }
+
   }
 }
 </script>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css?family=Oswald:300,400,500|PT+Sans+Narrow:400,700|Play:400,700|Ubuntu+Condensed&display=swap&subset=cyrillic');
 
