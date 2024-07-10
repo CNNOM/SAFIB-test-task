@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link to="/">Вернуться на главную</router-link>
+    <breadcrumbs/>
 
     <h1>Раздел {{ sectionName }}</h1>
     <ul v-if="menuItems[$route.params.index] && menuItems[$route.params.index].subsections">
@@ -15,12 +15,15 @@
 
 <script>
 import { mapState } from 'vuex';
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 export default {
+  components: {Breadcrumbs},
   computed: {
     ...mapState(['menuItems']),
     sectionName() {
       const index = this.$route.params.index;
+      console.log(this.$route)
       return this.menuItems[index] ? this.menuItems[index].name : 'Неизвестный раздел';
     }
   }

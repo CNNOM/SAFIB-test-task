@@ -39,6 +39,8 @@ export default {
     },
     addSubSection() {
       this.$store.dispatch('addSubSection', { index: this.selectedSection, subsection: { name: this.newSubSection } });
+      console.log(this.$store.dispatch)
+
       this.newSubSection = '';
     }
   }
