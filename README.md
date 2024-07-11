@@ -14,6 +14,7 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ```sh
 npm install
+npm install -D sass
 ```
 
 ### Compile and Hot-Reload for Development
