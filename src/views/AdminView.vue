@@ -3,23 +3,36 @@
     <router-link to="/" class="back-link">Вернуться на главную</router-link>
     <div class="screen">
       <div class="screen__content">
-
         <h1 class="admin-title">Админ панель</h1>
         <div class="forms-container">
+          <button @click="showAddMenuItemForm" class="button">Добавить Раздел</button>
+        </div>
+        <div class="forms-container" v-if="isAddMenuItemFormVisible">
           <form @submit.prevent="addMenuItem" class="admin-form">
             <div class="login__field">
               <i class="login__icon fas fa-folder"></i>
               <input v-model="newItem" class="login__input" placeholder="Новый раздел">
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-file-alt"></i>
-              <textarea v-model="newItemContent" class="login__input" placeholder="Содержание раздела"></textarea>
             </div>
             <button type="submit" class="button login__submit">
               <span class="button__text">Добавить раздел</span>
               <i class="button__icon fas fa-chevron-right"></i>
             </button>
           </form>
+        </div>
+      </div>
+      <div class="screen__content">
+        <div v-for="(item, index) in menuItems" :key="index" class="section">
+          <div class="section-header">
+            <h2>{{ item.name }}</h2>
+            <button @click="showAddSubSectionForm(index)" class="button">Вложить</button>
+          </div>
+          <ul class="subsections">
+            <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">{{ subsection.name }}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="screen__content" v-if="isAddSubSectionFormVisible">
+        <div class="forms-container">
           <form @submit.prevent="addSubSection" class="admin-form">
             <div class="login__field">
               <i class="login__icon fas fa-folder"></i>
@@ -30,10 +43,6 @@
             <div class="login__field">
               <i class="login__icon fas fa-folder-open"></i>
               <input v-model="newSubSection" class="login__input" placeholder="Новый подраздел">
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-file-alt"></i>
-              <textarea v-model="newSubSectionContent" class="login__input" placeholder="Содержание подраздела"></textarea>
             </div>
             <button type="submit" class="button login__submit">
               <span class="button__text">Добавить подраздел</span>
@@ -59,10 +68,10 @@ export default {
   data() {
     return {
       newItem: '',
-      newItemContent: '',
       newSubSection: '',
-      newSubSectionContent: '',
-      selectedSection: ''
+      selectedSection: '',
+      isAddMenuItemFormVisible: false,
+      isAddSubSectionFormVisible: false
     };
   },
   computed: {
@@ -71,22 +80,33 @@ export default {
   methods: {
     ...mapActions(['addMenuItem', 'addSubSection']),
     addMenuItem() {
-      this.$store.dispatch('addMenuItem', { name: this.newItem, content: this.newItemContent });
+      this.$store.dispatch('addMenuItem', { name: this.newItem, subsections: [] });
       this.newItem = '';
-      this.newItemContent = '';
+      this.isAddMenuItemFormVisible = false;
     },
     addSubSection() {
-      this.$store.dispatch('addSubSection', { index: this.selectedSection, subsection: { name: this.newSubSection, content: this.newSubSectionContent } });
+      console.log(this.selectedSection, " ", this.newSubSection)
+
+      this.$store.dispatch('addSubSection', { index: this.selectedSection, subsection: { name: this.newSubSection} });
       this.newSubSection = '';
-      this.newSubSectionContent = '';
+      this.isAddSubSectionFormVisible = false;
+    },
+    showAddMenuItemForm() {
+      this.isAddMenuItemFormVisible = true;
+      this.isAddSubSectionFormVisible = false;
+    },
+    showAddSubSectionForm(index) {
+      console.log(index)
+      console.log(this.selectedSection)
+      this.selectedSection = index;
+      this.isAddSubSectionFormVisible = true;
     }
   }
 }
 </script>
 
 <style scoped>
-
-.container{
+.container {
   overflow: hidden;
 }
 .screen {
@@ -98,7 +118,7 @@ export default {
   box-shadow: 0px 0px 24px #5C5696;
   display: flex;
   flex-direction: column;
-  border-radius: 26px ;
+  border-radius: 26px;
 }
 
 .login__input {
@@ -145,17 +165,16 @@ export default {
   text-align: center;
 }
 .back-link {
-   position: absolute;
-   top: 20px;
-   right: 20px;
-   color: white;
-   text-decoration: none;
-   font-size: 16px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
   border: 1px solid white;
   border-radius: 25px;
   padding: 10px;
-
- }
+}
 
 .back-link:hover {
   border: 1px solid #5C5696;
@@ -163,4 +182,14 @@ export default {
   background-color: white;
 }
 
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.subsections {
+  list-style-type: none;
+  padding: 0;
+}
 </style>
