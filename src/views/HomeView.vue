@@ -13,18 +13,14 @@
       </nav>
     </div>
     <div style="margin:20px;">
-      <nav>
-        <ul>
-          <li v-for="(item, index) in menuItems" :key="index">
-            <router-link :to="`/section/${index}`">{{ item.name }}</router-link>
-            <ul v-if="item.subsections && item.subsections.length > 0">
-              <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">
-                <router-link :to="`/section/${index}/${subIndex}`">{{ subsection.name }}</router-link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
+      <div v-for="(item, index) in menuItems" :key="index" class="card">
+        <router-link :to="`/section/${index}`">
+          <img :src="item.image" :alt="item.name" class="card-image">
+          <div class="card-content">
+            <h2>{{ item.name }}</h2>
+          </div>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -37,11 +33,41 @@ export default {
   components: {Breadcrumbs},
   computed: {
     ...mapState(['menuItems'])
+  },
+  methods:{
+
   }
 }
 </script>
 <style scoped>
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
 
+.card-image {
+  width:250px;
+  height: 250px;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card-content h2 {
+  margin-top: 0;
+}
+
+.card-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.card-content li {
+  margin-bottom: 5px;
+}
 .title {
   color: #5C5696;
   font-size: 24px;
@@ -52,6 +78,10 @@ export default {
   display: flex;
   justify-content: flex-start;
   margin-bottom: 20px;
+}
+img{
+  width:250px;
+  height: 250px;
 }
 nav {
   top: 15px;

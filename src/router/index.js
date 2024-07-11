@@ -4,6 +4,7 @@ import AdminView from "@/views/AdminView.vue";
 import LoginView from "@/views/LoginView.vue";
 import TheSection from "@/components/TheSection.vue";
 import TheSubSection from "@/components/TheSubSection.vue";
+import ContentCreation from "@/components/admin/ContentCreation.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,10 +24,16 @@ const router = createRouter({
 
         },
         {
+            path: '/content',
+            name: 'content',
+            component: ContentCreation,
+        },
+        {
             path: '/login',
             name: 'login',
             component: LoginView,
         },
+
         {
             path: '/section/:index',
             name: 'section',
@@ -76,14 +83,18 @@ router.beforeEach((to, from, next) => {
         path: to.path
     };
 
-    const index = breadcrumbs.findIndex(crumb => crumb.path === to.path);
-    if (index !== -1) {
-        breadcrumbs.splice(index + 1);
+    if (to.path === '/') {
+        localStorage.setItem('breadcrumbs', JSON.stringify([newBreadcrumb]));
     } else {
-        breadcrumbs.push(newBreadcrumb);
+        const index = breadcrumbs.findIndex(crumb => crumb.path === to.path);
+        if (index !== -1) {
+            breadcrumbs.splice(index + 1);
+        } else {
+            breadcrumbs.push(newBreadcrumb);
+        }
+        localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
     }
 
-    localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
     next();
 });
 

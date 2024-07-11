@@ -1,68 +1,54 @@
 <template>
   <div class="container">
-    <router-link to="/" class="back-link">Вернуться на главную</router-link>
+    <div class="back-link">
+      <router-link to="/" class="back-link-router">Вернуться на главную</router-link>
+      <router-link to="/content" class="back-link-router">создать карточку</router-link>
+    </div>
     <div class="screen">
       <div class="screen__content">
-
         <h1 class="admin-title">Админ панель</h1>
         <div class="forms-container">
-          <form @submit.prevent="addMenuItem" class="admin-form">
-            <div class="login__field">
-              <i class="login__icon fas fa-folder"></i>
-              <input v-model="newItem" class="login__input" placeholder="Новый раздел">
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-file-alt"></i>
-              <textarea v-model="newItemContent" class="login__input" placeholder="Содержание раздела"></textarea>
-            </div>
-            <button type="submit" class="button login__submit">
-              <span class="button__text">Добавить раздел</span>
-              <i class="button__icon fas fa-chevron-right"></i>
-            </button>
-          </form>
-          <form @submit.prevent="addSubSection" class="admin-form">
-            <div class="login__field">
-              <i class="login__icon fas fa-folder"></i>
-              <select v-model="selectedSection" class="login__input">
-                <option v-for="(item, index) in menuItems" :key="index" :value="index">{{ item.name }}</option>
-              </select>
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-folder-open"></i>
-              <input v-model="newSubSection" class="login__input" placeholder="Новый подраздел">
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-file-alt"></i>
-              <textarea v-model="newSubSectionContent" class="login__input" placeholder="Содержание подраздела"></textarea>
-            </div>
-            <button type="submit" class="button login__submit">
-              <span class="button__text">Добавить подраздел</span>
-              <i class="button__icon fas fa-chevron-right"></i>
-            </button>
-          </form>
+          <button
+              @click="showAddMenuItemForm"
+              class="button">Добавить Раздел</button>
         </div>
+        <AddMenuItemForm
+            v-if="isAddMenuItemFormVisible"
+            @add-menu-item="addMenuItem" />
       </div>
-      <div class="screen__background">
-        <span class="screen__background__shape screen__background__shape4"></span>
-        <span class="screen__background__shape screen__background__shape3"></span>
-        <span class="screen__background__shape screen__background__shape2"></span>
-        <span class="screen__background__shape screen__background__shape1"></span>
+      <div class="screen__content">
+        <MenuSections
+            :menuItems="menuItems"
+            @add-sub-section="showAddSubSectionForm" />
       </div>
+      <AddSubSectionForm
+          v-if="isAddSubSectionFormVisible"
+          :menuItems="menuItems"
+          :selectedSection="selectedSection"
+          @add-sub-section="addSubSection" />
     </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import AddMenuItemForm from '@/components/admin/AddMenuItemForm.vue';
+import AddSubSectionForm from '@/components/admin/AddSubSectionForm.vue';
+import MenuSections from '@/components/admin/MenuSections.vue';
 
 export default {
+  components: {
+    AddMenuItemForm,
+    AddSubSectionForm,
+    MenuSections
+  },
   data() {
     return {
       newItem: '',
-      newItemContent: '',
       newSubSection: '',
-      newSubSectionContent: '',
-      selectedSection: ''
+      selectedSection: '',
+      isAddMenuItemFormVisible: false,
+      isAddSubSectionFormVisible: false
     };
   },
   computed: {
@@ -70,25 +56,194 @@ export default {
   },
   methods: {
     ...mapActions(['addMenuItem', 'addSubSection']),
-    addMenuItem() {
-      this.$store.dispatch('addMenuItem', { name: this.newItem, content: this.newItemContent });
-      this.newItem = '';
-      this.newItemContent = '';
+
+    addMenuItem(formData) {
+      const item = {
+        name: formData.get('name'),
+        image: formData.get('image'),
+        subsections: []
+      };
+      this.$store.dispatch('addMenuItem', item);
+      this.isAddMenuItemFormVisible = false;
     },
-    addSubSection() {
-      this.$store.dispatch('addSubSection', { index: this.selectedSection, subsection: { name: this.newSubSection, content: this.newSubSectionContent } });
-      this.newSubSection = '';
-      this.newSubSectionContent = '';
+    addSubSection(data) {
+      console.log(this.selectedSection);
+      this.$store.dispatch('addSubSection', { sectionIndex: data.sectionIndex, subsection: { name: data.subsection } });
+      this.isAddSubSectionFormVisible = false;
+    },
+    showAddMenuItemForm() {
+      this.isAddMenuItemFormVisible = true;
+      this.isAddSubSectionFormVisible = false;
+    },
+    showAddSubSectionForm(index) {
+      this.selectedSection = index;
+      this.isAddSubSectionFormVisible = true;
     }
   }
 }
 </script>
 
 <style scoped>
-
-.container{
-  overflow: hidden;
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
 }
+
+.screen {
+  background: linear-gradient(90deg, #5D54A4, #7C78B8);
+  position: relative;
+  height: 600px;
+  width: 360px;
+  box-shadow: 0px 0px 24px #5C5696;
+}
+
+.screen__content {
+  z-index: 1;
+  position: relative;
+  height: 100%;
+}
+
+.screen__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  -webkit-clip-path: inset(0 0 0 0);
+  clip-path: inset(0 0 0 0);
+}
+
+.screen__background__shape {
+  transform: rotate(45deg);
+  position: absolute;
+}
+
+.screen__background__shape1 {
+  height: 520px;
+  width: 520px;
+  background: #FFF;
+  top: -50px;
+  right: 120px;
+  border-radius: 0 72px 0 0;
+}
+
+.screen__background__shape2 {
+  height: 220px;
+  width: 220px;
+  background: #6C63AC;
+  top: -172px;
+  right: 0;
+  border-radius: 32px;
+}
+
+.screen__background__shape3 {
+  height: 540px;
+  width: 190px;
+  background: linear-gradient(270deg, #5D54A4, #6A679E);
+  top: -24px;
+  right: 0;
+  border-radius: 32px;
+}
+
+.screen__background__shape4 {
+  height: 400px;
+  width: 200px;
+  background: #7E7BB9;
+  top: 420px;
+  right: 50px;
+  border-radius: 60px;
+}
+
+.login {
+  width: 320px;
+  padding: 30px;
+  padding-top: 156px;
+}
+
+.login__field {
+  padding: 20px 0px;
+  position: relative;
+}
+
+.login__icon {
+  position: absolute;
+  top: 30px;
+  color: #7875B5;
+}
+
+.login__input {
+  border: none;
+  border-bottom: 2px solid #D1D1D4;
+  background: none;
+  padding: 10px;
+  padding-left: 24px;
+  font-weight: 700;
+  width: 75%;
+  transition: .2s;
+}
+
+.login__input:active,
+.login__input:focus,
+.login__input:hover {
+  outline: none;
+  border-bottom-color: #6A679E;
+}
+
+.login__submit {
+  background: #fff;
+  font-size: 14px;
+  margin-top: 30px;
+  padding: 16px 20px;
+  border-radius: 26px;
+  border: 1px solid #D4D3E8;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: #4C489D;
+  box-shadow: 0px 2px 2px #5C5696;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.login__submit:active,
+.login__submit:focus,
+.login__submit:hover {
+  border-color: #6A679E;
+  outline: none;
+}
+
+.button__icon {
+  font-size: 24px;
+  margin-left: auto;
+  color: #7875B5;
+}
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.screen {
+  background: linear-gradient(90deg, #5D54A4, #7C78B8);
+  position: relative;
+  height: 600px;
+  width: 360px;
+  box-shadow: 0px 0px 24px #5C5696;
+}
+
+.screen__content {
+  z-index: 1;
+  position: relative;
+  height: 100%;
+}
+
+
 .screen {
   background: linear-gradient(90deg, #5D54A4, #7C78B8);
   position: relative;
@@ -98,19 +253,9 @@ export default {
   box-shadow: 0px 0px 24px #5C5696;
   display: flex;
   flex-direction: column;
-  border-radius: 26px ;
-}
-
-.login__input {
-  background-color: white;
   border-radius: 26px;
-  width: 350px;
-  border: 1px solid #5C5696;
 }
 
-.login__submit {
-  width: 350px;
-}
 
 .forms-container {
   display: flex;
@@ -119,21 +264,7 @@ export default {
   flex: 1;
 }
 
-.admin-form {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin-right: 20px;
-}
 
-.admin-form:last-child {
-  margin-right: 0;
-}
-
-.login__field {
-  margin-bottom: 20px;
-}
 
 .button {
   margin-top: auto;
@@ -145,22 +276,29 @@ export default {
   text-align: center;
 }
 .back-link {
-   position: absolute;
-   top: 20px;
-   right: 20px;
-   color: white;
-   text-decoration: none;
-   font-size: 16px;
+  position: absolute;
+  display: block;
+  top: 20px;
+  right: 20px;
+
+}
+
+.back-link-router{
+  top: 20px;
+  right: 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
   border: 1px solid white;
   border-radius: 25px;
   padding: 10px;
+}
 
- }
-
-.back-link:hover {
+.back-link-router:hover {
   border: 1px solid #5C5696;
   color: #5C5696;
   background-color: white;
 }
+
 
 </style>

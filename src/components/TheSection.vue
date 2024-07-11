@@ -3,22 +3,27 @@
     <Breadcrumbs />
     <h1 class="title">Раздел {{ sectionName }}</h1>
 
-    <nav>
-      <ul>
-        <li v-for="(subsection, subIndex) in subsections" :key="subIndex">
-          <router-link :to="`/section/${$route.params.index}/${subIndex}`">{{ subsection.name }}</router-link>
-        </li>
-      </ul>
-    </nav>
-    <p v-if="!subsections || subsections.length === 0">Нет доступных подразделов.</p>
+    <div v-if="!subsections || subsections.length === 0">Нет доступных подразделов.</div>
     <router-view></router-view>
 
     <div v-if="sectionContent">
       <p>{{ sectionContent }}</p>
     </div>
+
+    <ul>
+      <li v-for="(subsection, subIndex) in subsections" :key="subIndex">
+        <router-link :to="`/section/${$route.params.index}/${subIndex}`">
+          <div class="card">
+            <img :src="subsection.image" :alt="subsection.name" class="card-image" />
+            <div class="card-content">
+              <h2>{{ subsection.name }}</h2>
+            </div>
+          </div>
+        </router-link>
+      </li>
+    </ul>
   </div>
 </template>
-
 
 <script>
 import { mapState } from 'vuex';
@@ -51,6 +56,49 @@ export default {
   font-size: 24px;
   margin: 20px;
   text-align: center;
+}
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card-image {
+  width:250px;
+  height: 250px;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card-content h2 {
+  margin-top: 0;
+}
+
+.card-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.card-content li {
+  margin-bottom: 5px;
+}
+.title {
+  color: #5C5696;
+  font-size: 24px;
+  margin: 20px;
+  text-align: center;
+}
+.breadcrumbs-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+img{
+  width:250px;
+  height: 250px;
 }
 nav {
   top: 15px;
