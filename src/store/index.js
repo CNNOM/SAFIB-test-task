@@ -24,17 +24,40 @@ export default new Vuex.Store({
             return false;
         },
         addMenuItem({ commit, state }, item) {
-            const items = [...state.menuItems, { ...item, subsections: [] }];
+            const items = [...state.menuItems, { ...item, children: [] }];
             commit('setMenuItems', items);
         },
-        addSubSection({ commit, state }, { sectionIndex, subsection }) {
+        addSubSection({ commit, state }, { sectionIndex, subsection, parentIndex }) {
             const items = [...state.menuItems];
             const section = items[sectionIndex];
-            if (!section.subsections) {
-                section.subsections = [];
+            if (!section.children) {
+                section.children = [];
             }
-            section.subsections.push(subsection);
+            if (parentIndex !== undefined) {
+                const parent = findItem(section.children, parentIndex);
+                if (!parent.children) {
+                    parent.children = [];
+                }
+                parent.children.push(subsection);
+            } else {
+                section.children.push(subsection);
+            }
             commit('setMenuItems', items);
         }
     }
 });
+
+function findItem(items, index) {
+    for (let i = 0; i < items.length; i++) {
+        if (i === index) {
+            return items[i];
+        }
+        if (items[i].children) {
+            const found = findItem(items[i].children, index);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return null;
+}

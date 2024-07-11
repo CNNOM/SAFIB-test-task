@@ -7,69 +7,32 @@
         <div class="forms-container">
           <button @click="showAddMenuItemForm" class="button">Добавить Раздел</button>
         </div>
-        <div class="forms-container" v-if="isAddMenuItemFormVisible">
-          <form @submit.prevent="addMenuItem" class="admin-form">
-            <div class="login__field">
-              <i class="login__icon fas fa-folder"></i>
-              <input v-model="newItem" class="login__input" placeholder="Новый раздел">
-            </div>
-            <button type="submit" class="button login__submit">
-              <span class="button__text">Добавить раздел</span>
-              <i class="button__icon fas fa-chevron-right"></i>
-            </button>
-          </form>
-        </div>
+        <add-menu-item-form :isVisible="isAddMenuItemFormVisible" @add-menu-item="addMenuItem" />
       </div>
       <div class="screen__content">
         <div v-for="(item, index) in menuItems" :key="index" class="section">
-          <div class="section-header">
-            <h2>{{ item.name }}</h2>
-            <button @click="showAddSubSectionForm(index)" class="button">Вложить</button>
-          </div>
-          <ul class="subsections">
-            <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">{{ subsection.name }}</li>
-          </ul>
+          <nested-section :item="item" :index="index" @addSubSection="showAddSubSectionForm" />
         </div>
       </div>
-      <div class="screen__content" v-if="isAddSubSectionFormVisible">
-        <div class="forms-container">
-          <form @submit.prevent="addSubSection" class="admin-form">
-            <div class="login__field">
-              <i class="login__icon fas fa-folder"></i>
-              <select v-model="selectedSection" class="login__input">
-                <option v-for="(item, index) in menuItems" :key="index" :value="index">{{ item.name }}</option>
-              </select>
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-folder-open"></i>
-              <input v-model="newSubSection" class="login__input" placeholder="Новый подраздел">
-            </div>
-            <button type="submit" class="button login__submit">
-              <span class="button__text">Добавить подраздел</span>
-              <i class="button__icon fas fa-chevron-right"></i>
-            </button>
-          </form>
-        </div>
-      </div>
-      <div class="screen__background">
-        <span class="screen__background__shape screen__background__shape4"></span>
-        <span class="screen__background__shape screen__background__shape3"></span>
-        <span class="screen__background__shape screen__background__shape2"></span>
-        <span class="screen__background__shape screen__background__shape1"></span>
-      </div>
+      <add-sub-section-form :isVisible="isAddSubSectionFormVisible" :menuItems="menuItems" @add-sub-section="addSubSection" />
     </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import NestedSection from '@/components/admin/NestedSection.vue';
+import AddMenuItemForm from '@/components/admin/AddMenuItemForm.vue';
+import AddSubSectionForm from '@/components/admin/AddSubSectionForm.vue';
 
 export default {
+  components: {
+    NestedSection,
+    AddMenuItemForm,
+    AddSubSectionForm
+  },
   data() {
     return {
-      newItem: '',
-      newSubSection: '',
-      selectedSection: '',
       isAddMenuItemFormVisible: false,
       isAddSubSectionFormVisible: false
     };
@@ -79,16 +42,6 @@ export default {
   },
   methods: {
     ...mapActions(['addMenuItem', 'addSubSection']),
-    addMenuItem() {
-      this.$store.dispatch('addMenuItem', { name: this.newItem, subsections: [] });
-      this.newItem = '';
-      this.isAddMenuItemFormVisible = false;
-    },
-    addSubSection() {
-      this.$store.dispatch('addSubSection', { sectionIndex: this.selectedSection, subsection: { name: this.newSubSection } });
-      this.newSubSection = '';
-      this.isAddSubSectionFormVisible = false;
-    },
     showAddMenuItemForm() {
       this.isAddMenuItemFormVisible = true;
       this.isAddSubSectionFormVisible = false;
@@ -96,11 +49,18 @@ export default {
     showAddSubSectionForm(index) {
       this.selectedSection = index;
       this.isAddSubSectionFormVisible = true;
+    },
+    addMenuItem(newItem) {
+      this.$store.dispatch('addMenuItem', { name: newItem, children: [] });
+      this.isAddMenuItemFormVisible = false;
+    },
+    addSubSection(data) {
+      this.$store.dispatch('addSubSection', data);
+      this.isAddSubSectionFormVisible = false;
     }
   }
 }
 </script>
-
 <style scoped>
 .container {
   overflow: hidden;
