@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <router-link to="/" class="back-link">Вернуться на главную</router-link>
+    <div class="back-link">
+      <router-link to="/" class="back-link-router">Вернуться на главную</router-link>
+      <router-link to="/content" class="back-link-router">создать карточку</router-link>
+    </div>
     <div class="screen">
       <div class="screen__content">
         <h1 class="admin-title">Админ панель</h1>
@@ -111,6 +114,13 @@ export default {
 }
 .back-link {
   position: absolute;
+  display: block;
+  top: 20px;
+  right: 20px;
+
+}
+
+.back-link-router{
   top: 20px;
   right: 20px;
   color: white;
@@ -121,7 +131,7 @@ export default {
   padding: 10px;
 }
 
-.back-link:hover {
+.back-link-router:hover {
   border: 1px solid #5C5696;
   color: #5C5696;
   background-color: white;
