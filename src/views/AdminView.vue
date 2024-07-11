@@ -85,9 +85,7 @@ export default {
       this.isAddMenuItemFormVisible = false;
     },
     addSubSection() {
-      console.log(this.selectedSection, " ", this.newSubSection)
-
-      this.$store.dispatch('addSubSection', { index: this.selectedSection, subsection: { name: this.newSubSection} });
+      this.$store.dispatch('addSubSection', { sectionIndex: this.selectedSection, subsection: { name: this.newSubSection } });
       this.newSubSection = '';
       this.isAddSubSectionFormVisible = false;
     },
@@ -96,8 +94,6 @@ export default {
       this.isAddSubSectionFormVisible = false;
     },
     showAddSubSectionForm(index) {
-      console.log(index)
-      console.log(this.selectedSection)
       this.selectedSection = index;
       this.isAddSubSectionFormVisible = true;
     }

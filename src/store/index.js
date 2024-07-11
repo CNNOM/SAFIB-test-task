@@ -27,16 +27,13 @@ export default new Vuex.Store({
             const items = [...state.menuItems, { ...item, subsections: [] }];
             commit('setMenuItems', items);
         },
-        addSubSection({ commit, state }, { sectionTitle, subsection }) {
-            const items = state.menuItems.map(item => {
-                if (item.title === sectionTitle) {
-                    if (!item.subsections) {
-                        item.subsections = [];
-                    }
-                    item.subsections.push(subsection);
-                }
-                return item;
-            });
+        addSubSection({ commit, state }, { sectionIndex, subsection }) {
+            const items = [...state.menuItems];
+            const section = items[sectionIndex];
+            if (!section.subsections) {
+                section.subsections = [];
+            }
+            section.subsections.push(subsection);
             commit('setMenuItems', items);
         }
     }
