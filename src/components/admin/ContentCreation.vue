@@ -6,7 +6,7 @@
       <h2 @click="toggleSubsections(index)">{{ item.name }}</h2>
       <ul v-if="item.showSubsections && item.subsections && item.subsections.length > 0" class="subsections">
         <li v-for="(subsection, subIndex) in item.subsections" :key="subIndex">
-          {{ subsection.name ? subsection.name : 'Подразделов нет' }}
+          {{ subsection.name || 'Подразделов нет' }}
           <button @click="selectSubsection(subsection)">Выбрать</button>
         </li>
       </ul>
@@ -43,6 +43,14 @@
           <label for="card-color">Цвет текста:</label>
           <input type="color" id="card-color" v-model="newCard.color">
         </div>
+        <div>
+          <label for="card-author">Автор:</label>
+          <input id="card-author" v-model="newCard.author">
+        </div>
+        <div>
+          <label for="card-price">Цена:</label>
+          <input id="card-price" v-model="newCard.price" type="number">
+        </div>
         <button type="submit">Создать карточку</button>
       </form>
     </div>
@@ -50,7 +58,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {mapState} from "vuex";
 
 export default {
   data() {
@@ -62,7 +70,9 @@ export default {
         features: '',
         image: null,
         font: 'Arial',
-        color: '#000000'
+        color: '#000000',
+        author: '',
+        price: 0
       },
       cards: []
     };
@@ -94,7 +104,9 @@ export default {
         features: '',
         image: null,
         font: 'Arial',
-        color: '#000000'
+        color: '#000000',
+        author: '',
+        price: 0
       };
     },
     saveCardsToLocalStorage() {
