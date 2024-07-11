@@ -83,14 +83,18 @@ router.beforeEach((to, from, next) => {
         path: to.path
     };
 
-    const index = breadcrumbs.findIndex(crumb => crumb.path === to.path);
-    if (index !== -1) {
-        breadcrumbs.splice(index + 1);
+    if (to.path === '/') {
+        localStorage.setItem('breadcrumbs', JSON.stringify([newBreadcrumb]));
     } else {
-        breadcrumbs.push(newBreadcrumb);
+        const index = breadcrumbs.findIndex(crumb => crumb.path === to.path);
+        if (index !== -1) {
+            breadcrumbs.splice(index + 1);
+        } else {
+            breadcrumbs.push(newBreadcrumb);
+        }
+        localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
     }
 
-    localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
     next();
 });
 
