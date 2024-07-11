@@ -35,6 +35,6 @@ export default new Vuex.Store({
             }
             section.subsections.push(subsection);
             commit('setMenuItems', items);
-        }
+        },
     }
 });
